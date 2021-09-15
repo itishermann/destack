@@ -35,5 +35,8 @@
       "pretty-quick --staged",
       "tsc --noEmit"
     ]
+  },
+  "dependencies": {
+    "next-seo": "^4.26.0"
   }
 }
