@@ -64,6 +64,55 @@ const getUpdateThemeModal = (editor) => {
   return container
 }
 
+const getUpdateMetaTagsModal = (editor: any) => {
+  const md = editor.Modal
+  const pfx = editor.getConfig().stylePrefix
+
+  const container = document.createElement('div')
+
+  const containerBody = document.createElement('div')
+  containerBody.style.padding = '40px 0px'
+  containerBody.style.display = 'flex'
+  containerBody.style.justifyContent = 'center'
+
+  let selectedTheme
+  themeList.forEach((theme) => {
+    const btnColor = document.createElement('button')
+    btnColor.className = 'change-theme-button'
+    btnColor.style.backgroundColor = theme.color
+    btnColor.onclick = () => (selectedTheme = theme)
+
+    containerBody.appendChild(btnColor)
+  })
+
+  const containerFooter = document.createElement('div')
+
+  const btnEdit = document.createElement('button')
+  btnEdit.innerHTML = 'Update'
+  btnEdit.className = pfx + 'btn-prim ' + pfx + 'btn-import'
+  btnEdit.style.float = 'right'
+  btnEdit.onclick = () => {
+    updateThemeColor(editor, selectedTheme.name)
+    md.close()
+  }
+
+  const btnCancel = document.createElement('button')
+  btnCancel.innerHTML = 'Cancel'
+  btnCancel.className = pfx + 'btn-prim ' + pfx + 'btn-import'
+  btnCancel.style.float = 'right'
+  btnCancel.onclick = () => {
+    md.close()
+  }
+
+  // box-shadow: 0 0 0 2pt #c5c5c575
+  containerFooter.appendChild(btnEdit)
+  containerFooter.appendChild(btnCancel)
+
+  container.appendChild(containerBody)
+  container.appendChild(containerFooter)
+  return container
+}
+
 const getAllComponents = (model: any, result = [] as any[]) => {
   result.push(model)
   model.components().each((mod) => getAllComponents(mod, result))
@@ -147,7 +196,16 @@ export const loadPanels = (editor, isDev) => {
     className: 'fa fa-wrench',
     command: 'open-update-theme',
     attributes: {
-      title: 'About',
+      title: 'Update Color Theme',
+      'data-tooltip-pos': 'bottom',
+    },
+  })
+  editor.Panels.addButton('options', {
+    id: 'update-meta-tags',
+    className: 'fa fa-tags',
+    command: 'open-update-meta-tags',
+    attributes: {
+      title: 'Change meta tags',
       'data-tooltip-pos': 'bottom',
     },
   })
@@ -166,6 +224,16 @@ export const loadPanels = (editor, isDev) => {
       const md = editor.Modal
       md.setTitle('Change Theme')
       const container = getUpdateThemeModal(editor)
+      md.setContent(container)
+      md.open()
+    },
+  })
+  editor.Commands.add('open-update-meta-tags', {
+    run(_, sender) {
+      sender.set('active', 0)
+      const md = editor.Modal
+      md.setTitle('Change Meta Tags')
+      const container = getUpdateMetaTagsModal(editor)
       md.setContent(container)
       md.open()
     },
